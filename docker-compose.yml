@@ -1,0 +1,15 @@
+
+services:
+  server:
+    container_name: my_server
+    build: ./
+    command: bash -c 'uvicorn server:app --reload --host 127.0.0.1 --port 8000'
+    ports:
+      - 8000:8000
+  client:
+    container_name: my_client
+    build: ./
+    command: python ./client.py
+    network_mode: host
+    depends_on:
+      - server
