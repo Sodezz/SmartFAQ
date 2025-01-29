@@ -1,6 +1,8 @@
 alembic==1.14.1
 fastapi>=0.115.6
-uvicorn==0.34.0
-SQLAlchemy==2.0.37
+pydantic==2.10.5
 psycopg2==2.9.10
+python-dotenv==1.0.1
 python-multipart==0.0.20
+SQLAlchemy==2.0.37
+uvicorn==0.34.0
