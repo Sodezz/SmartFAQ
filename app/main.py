@@ -1,31 +1,16 @@
 from fastapi import FastAPI
 
-from app.core.services.uploading_document import upload_documents
-from app.core.services.creating_document import create_document
-from app.core.schemas.documents.documents import Document
+from starlette_admin.contrib.sqla import Admin, ModelView
+
+from app.core.database.postgres.database import engine
+from app.core.models.postgres.models import DocumentBase
+from app.core.models.postgres.router import router as router_documents
 
 app = FastAPI()
+admin = Admin(engine, title='Admin panel')
 
-@app.get("/")
-def root():
-    return {"message": "Hello World"}
+admin.add_view(ModelView(DocumentBase))
 
-@app.post(
-    "/documents/" ,
-        tags=["Документы"],
-        summary="Документы",
-        response_model=Document
-)
+admin.mount_to(app)
 
-async def create_document():
-    await create_document()
-
-
-@app.post(
-    "/upload",
-    tags=["Документы"],
-    summary="Загрузка документов"
-)
-
-async def upload_document():
-    await upload_documents()
+app.include_router(router_documents)
