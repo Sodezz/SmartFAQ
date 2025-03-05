@@ -1,5 +1,13 @@
 from pydantic import BaseModel
 
-class Document(BaseModel):
-    name: str
-    author: str
+class DocumentCreate(BaseModel):
+    title: str
+    content: str
+
+class DocumentResponse(BaseModel):
+    id: int
+    title: str
+    content: str
+
+class QuestionRequest(BaseModel):
+    question: str

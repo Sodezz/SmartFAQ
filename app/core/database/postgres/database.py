@@ -1,12 +1,8 @@
 import os
 
-from sqlalchemy.ext.asyncio import (
-    create_async_engine,
-    async_sessionmaker,
-    AsyncAttrs
-)
-from sqlalchemy.orm import DeclarativeBase
-
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -21,15 +17,14 @@ database_url = (f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POS
                 f"{POSTGRES_PORT}/{POSTGRES_DB}"
                 )
 
-engine = create_async_engine(database_url)
-async_session = async_sessionmaker(engine, expire_on_commit=False)
+engine = create_engine(database_url)
+session = sessionmaker(bind=engine)
 
-class Base(AsyncAttrs, DeclarativeBase):
-    pass
+base = declarative_base()
 
-def get_database():
-    database = async_session()
+def get_db():
+    db = session()
     try:
-        yield database
+        yield db
     finally:
-        database.close()
+        db.close()

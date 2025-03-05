@@ -5,7 +5,7 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from app.core.database.postgres.database import Base, database_url
+from app.core.database.postgres.database import base, database_url
 from app.core.models.postgres.models import DocumentBase
 
 # this is the Alembic Config object, which provides
