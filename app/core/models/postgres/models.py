@@ -1,26 +1,29 @@
+from typing import Optional
+
 from sqlalchemy import (
-    Column,
-    Integer,
     String,
-    Float,
     Text
 )
+from sqlalchemy.orm import (
+    DeclarativeBase,
+    Mapped,
+    mapped_column
+)
 
-from app.core.database.postgres.database import base
+class BaseSQL(DeclarativeBase): 
+    pass
 
-class DocumentBase(base):
+class UserBase(BaseSQL):
+    __tablename__ = "user_account"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String(14))
+    hashed_pass: Mapped[str]
+
+class Document(BaseSQL):
     __tablename__ = "documents"
 
-    id = Column(Integer, primary_key=True)
-    title = Column(String)
-    content_doc = Column(Text) #Хранение файла документа
-    vector_doc = Column(Text)
-
-class FAQ(base):
-    __tablename__ = "FAQ"
-
-    id = Column(Integer, primary_key=True)
-    question = Column(String)
-    answer = Column(String)
-    vector_store_doc = Column(Float) #Хранение вектора документа
+    id: Mapped[int] = mapped_column(primary_key=True)
+    filename: Mapped[str] = mapped_column(String(100))
+    file_url: Mapped[str] = mapped_column(Text)
 

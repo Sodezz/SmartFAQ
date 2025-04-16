@@ -2,7 +2,7 @@ import os
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+from core.models.postgres.models import Base
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -19,8 +19,6 @@ database_url = (f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POS
 
 engine = create_engine(database_url)
 session = sessionmaker(bind=engine)
-
-base = declarative_base()
 
 def get_db():
     db = session()
