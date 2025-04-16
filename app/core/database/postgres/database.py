@@ -2,7 +2,6 @@ import os
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from core.models.postgres.models import Base
 from dotenv import load_dotenv
 
 load_dotenv()

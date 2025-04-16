@@ -17,13 +17,13 @@ class UserBase(BaseSQL):
     __tablename__ = "user_account"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    name: Mapped[str] = mapped_column(String(14))
-    hashed_pass: Mapped[str]
+    name: Mapped[str] = mapped_column(String(14), nullable=False)
+    hashed_pass: Mapped[str] = mapped_column(String(32), nullable=False)
 
 class Document(BaseSQL):
     __tablename__ = "documents"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    filename: Mapped[str] = mapped_column(String(100))
-    file_url: Mapped[str] = mapped_column(Text)
+    filename: Mapped[str] = mapped_column(String(100), nullable=False)
+    file_url: Mapped[str] = mapped_column(Text, nullable=False)
 
