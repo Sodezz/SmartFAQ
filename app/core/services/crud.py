@@ -1,4 +1,6 @@
+from bcrypt import hashpw, gensalt
 from sqlalchemy.orm import Session
+
 
 import app.core.models.models as models
 import app.core.schemas.user as user_schema
@@ -12,7 +14,7 @@ def get_user(db: Session, user_id: int):
         db (Session): сессия SQLAlchemy для работы с БД.
         user_id (int): идентификатор пользователя.
     """
-    return db.query(models.UserBase).filter(models.UserBase.id == user_id).first()
+    return db.query(models.UserORM).filter(models.UserORM.id == user_id).first()
 
 
 def get_users(db: Session, skip: int = 0, limit: int = 10):
@@ -24,7 +26,7 @@ def get_users(db: Session, skip: int = 0, limit: int = 10):
         skip (int): сколько первых записей пропустить. По умолчанию 0.
         limit (int): максимальное число возвращаемых записей. По умолчанию 10.
     """
-    return db.query(models.UserBase).offset(skip).limit(limit).all()
+    return db.query(models.UserORM).offset(skip).limit(limit).all()
 
 
 def create_user(db: Session, user: user_schema.UserCreate):
@@ -36,9 +38,15 @@ def create_user(db: Session, user: user_schema.UserCreate):
         user (UserCreate): Pydantic-схема с данными для создания пользователя:
             - username: str — логин пользователя.
             - email: EmailStr — электронная почта пользователя.
-            - password: SecretStr - пароль пользователя. ( добавить)
+            - password: SecretStr - пароль пользователя.
     """
-    db_user = models.UserBase(username=user.username, email=str(user.email))
+    get_pass = user.password.get_secret_value().encode("utf8")
+    hash_pass = hashpw(get_pass, gensalt())
+    hash_pass_str = hash_pass.decode("utf8")
+
+    db_user = models.UserORM(
+        username=user.username, email=str(user.email), password=hash_pass_str
+    )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)

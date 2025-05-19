@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from schemas.user import User
+from app.core.schemas.user import User, UserCreate
 from app.core.services import crud
 from app.core.database.postgres.database import get_db
 
@@ -13,6 +13,18 @@ router = APIRouter(prefix="/users", tags=["Пользователи"])
 )
 def get_users(db: Session = Depends(get_db), skip: int = 0, limit: int = 10):
     users = crud.get_users(db=db, skip=skip, limit=limit)
+    return users
+
+
+@router.post("/create_user", response_model=User, summary="Создание пользователя")
+def create_user(
+    username: str,
+    email: str,
+    password: str,
+    user: UserCreate,
+    db: Session = Depends(get_db),
+):
+    users = crud.create_user(db=db, user=user)
     return users
 
 
