@@ -1,4 +1,5 @@
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, SecretStr
+from pydantic import (BaseModel, ConfigDict, EmailStr, Field, SecretStr,
+                      field_validator)
 from pydantic_core import PydanticCustomError
 
 
@@ -28,7 +29,7 @@ class User(BaseModel):
         ..., description="Почта пользователя", examples=["user@gmail.com"]
     )
 
-    @field_validator("username", mode="before")
+    @field_validator("username")
     def validate_username(cls, value: str) -> str:
         """
         Валидатор поля username.
@@ -50,6 +51,10 @@ class UserCreate(User):
     Наследует все поля из User, плюс:
     - password: защищённая строка (минимум 6 символов).
     """
+
     password: SecretStr = Field(
-        ..., description="Пароль пользователя", examples=["<PASSWORD>"], min_length=6
+        ...,
+        description="Пароль пользователя",
+        examples=["<PASSWORD>"],
+        min_length=6,
     )
