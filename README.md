@@ -42,6 +42,51 @@ Use the built-in continuous integration in GitLab.
 - [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
 - [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
 
+## Document QA API
+
+REST API to upload PDF/DOCX files, index their contents with embeddings, and answer questions by searching the uploaded documents. Runs fully locally; if `OPENAI_API_KEY` is set, it will generate concise answers using an LLM, otherwise it returns the most relevant snippet.
+
+### Requirements
+- Python 3.10+
+
+### Install
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### Run
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+### Endpoints
+- `GET /health`: Health check
+- `POST /documents`: Upload and index documents
+  - Form field `files`: one or more files (`.pdf`, `.docx`)
+- `POST /query`:
+  - JSON body: `{ "question": "...", "top_k": 5 }`
+  - Returns `answer` and `sources` (snippets with scores and metadata)
+- `DELETE /reset`: Clears the index
+
+### Example
+```bash
+curl -X POST "http://localhost:8000/documents" \
+  -F "files=@/path/to/file1.pdf" \
+  -F "files=@/path/to/file2.docx"
+
+curl -X POST "http://localhost:8000/query" \
+  -H "Content-Type: application/json" \
+  -d '{"question":"Что говорится про сроки?", "top_k": 5}'
+```
+
+### Config
+- `APP_DATA_DIR`: where to store uploads and index (default `/workspace/app_data`)
+- `EMBEDDING_MODEL`: FastEmbed model name (default `sentence-transformers/all-MiniLM-L6-v2`)
+- `OPENAI_API_KEY`: optional; if set, API will use an LLM to compose answers
+- `OPENAI_MODEL`: optional; default `gpt-4o-mini`
+
 ***
 
 # Editing this README
